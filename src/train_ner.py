@@ -2,9 +2,7 @@ import spacy
 from spacy.training import Example
 import random
 
-# -----------------------
 # 1. Training Data (Safe Span Calculation)
-# -----------------------
 
 def make_example(text, entities_list):
     entities = []
@@ -95,9 +93,7 @@ TRAIN_DATA = [
     ),
 ]
 
-# -----------------------
 # 2. Create Blank Model
-# -----------------------
 
 nlp = spacy.load("en_core_web_sm")
 ner = nlp.get_pipe("ner")
@@ -107,13 +103,6 @@ ner.add_label("PARTY")
 ner.add_label("MONEY")
 ner.add_label("JURISDICTION")
 
-# -----------------------
-# 3. Train Model
-# -----------------------
-
-# -----------------------
-# 2. Load Base Model
-# -----------------------
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -143,9 +132,7 @@ with nlp.disable_pipes(*other_pipes):
 
         print(f"Epoch {epoch+1}, Loss: {losses}")
 
-# -----------------------
 # 3. Save Model
-# -----------------------
 
 nlp.to_disk("models/legal_ner_model")
 print("\nModel training complete and saved.")
