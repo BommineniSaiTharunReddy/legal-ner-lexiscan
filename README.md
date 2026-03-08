@@ -1,148 +1,244 @@
-# 🧾 LexiScan Auto – Intelligent Legal Entity Extraction (NER)
+# Automated Legal Entity Extractor (LexiScan Auto)
 
-An end-to-end NLP pipeline for automated extraction of key entities from unstructured legal contracts using OCR and Custom Named Entity Recognition (NER).
+## Overview
 
----
+LexiScan Auto is an **AI-powered legal document analysis system** that extracts structured entities from legal contracts.
+The system processes PDF contracts and automatically identifies key legal information such as **dates, parties, jurisdictions, monetary values, and signatories**.
 
-##  Project Overview
-
-LexiScan Auto is designed to process high-volume unstructured legal PDF contracts and extract structured information such as:
-
--  Effective Dates  
--  Party Names  
--  Monetary Values  
--  Jurisdiction  
-
-Traditional Regex-based extraction is rigid and error-prone.  
-This project implements a contextual deep learning-based NER system tailored specifically for legal documents.
+This project combines **OCR, Natural Language Processing (NLP), and rule-based post-processing** to convert unstructured legal documents into structured JSON data.
 
 ---
 
-##  System Architecture
+## Features
 
-Scanned PDF  
-↓  
-Tesseract OCR  
-↓  
-Clean Extracted Text  
-↓  
-Custom SpaCy NER Model  
-↓  
-Structured JSON Output  
-↓  
-Validation & Heuristic Checks  
+* Extract entities from legal contracts
+* Handles scanned or image-based PDFs using OCR
+* Custom **spaCy Named Entity Recognition (NER) model**
+* Rule-based layer to improve precision
+* REST API using **FastAPI**
+* End-to-end automated pipeline
+* Unit tests using **pytest**
 
 ---
 
-##  Tech Stack
+## Extracted Entities
 
-- Python  
-- SpaCy (Custom NER Training)  
-- TensorFlow / Bi-LSTM (experimental deep learning model)  
-- Tesseract OCR  
-- pdf2image  
-- JSON-based structured output  
+The system extracts the following entities:
 
----
-
-##  Project Structure
-
-legal-ner-lexiscan/  
-│  
-├── src/  
-│   ├── ocr.py              # OCR processing  
-│   ├── train_ner.py        # Model training script  
-│   ├── evaluate.py         # Model evaluation  
-│   └── main.py             # Inference pipeline  
-│  
-├── data/                   # Sample / synthetic contracts  
-├── models/                 # Saved trained model (ignored in Git)  
-├── requirements.txt  
-└── README.md  
+* **DATE** – contract dates and deadlines
+* **PARTY** – organizations involved in the contract
+* **PERSON** – signatories or individuals
+* **JURISDICTION** – locations and governing law
+* **MONEY** – contract values and payments
 
 ---
 
-##  Installation
+## Project Architecture
 
-### 1️⃣ Clone Repository
-
-git clone https://github.com/BommineniSaiTharunReddy/legal-ner-lexiscan.git  
-cd legal-ner-lexiscan  
-
-### 2️⃣ Create Virtual Environment
-
-python -m venv venv  
-venv\Scripts\activate  
-
-### 3️⃣ Install Dependencies
-
-pip install -r requirements.txt  
-
----
-
-##  Training the NER Model
-
-python src/train_ner.py  
-
-This will:
-- Train a custom legal-domain NER model  
-- Save the trained model inside the `models/` directory  
+```
+PDF Contract
+     │
+     ▼
+OCR (pdf2image + Tesseract)
+     │
+     ▼
+spaCy Custom NER Model
+     │
+     ▼
+Rule-based Post Processing
+     │
+     ▼
+Structured JSON Output
+```
 
 ---
 
-##  Running Entity Extraction
+## Project Structure
 
-python src/main.py  
+```
+legal_ner_project
+│
+├── data_raw_pdfs
+│   └── sample.pdf
+│
+├── models
+│   └── legal_ner_model
+│
+├── src
+│   ├── api.py
+│   ├── extract_entities.py
+│   ├── ocr.py
+│   ├── post_processing.py
+│   ├── train_ner.py
+│   └── evaluate.py
+│
+├── tests
+│   ├── test_entities.py
+│   └── test_pipeline.py
+│
+├── README.md
+└── .gitignore
+```
 
-### Sample Output
+---
 
+## Installation
+
+### 1. Clone the Repository
+
+```
+git clone https://github.com/your-username/legal-ner-lexiscan.git
+cd legal-ner-lexiscan
+```
+
+### 2. Create Virtual Environment
+
+```
+python -m venv venv
+```
+
+Activate:
+
+Windows
+
+```
+venv\Scripts\activate
+```
+
+Mac/Linux
+
+```
+source venv/bin/activate
+```
+
+---
+
+### 3. Install Dependencies
+
+```
+pip install -r requirements.txt
+```
+
+---
+
+### 4. Install OCR Dependencies
+
+Install **Tesseract OCR**
+
+https://github.com/tesseract-ocr/tesseract
+
+Install **Poppler**
+
+https://github.com/oschwartz10612/poppler-windows
+
+---
+
+## Running the API
+
+Start the FastAPI server:
+
+```
+uvicorn src.api:app --reload
+```
+
+Open API documentation:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## API Endpoint
+
+### Upload Contract for Entity Extraction
+
+POST `/extract`
+
+Upload a **PDF contract** and the system will return extracted entities.
+
+---
+
+## Example Output
+
+```
 {
-  "Extracted_Entities": {
-    "DATE": ["March 10, 2026"],
-    "PARTY": ["Alpha Tech Solutions Pvt Ltd"],
-    "MONEY": ["$1,200,000"],
-    "JURISDICTION": ["Texas, USA"]
-  },
-  "Validation_Checks": {
-    "Date_Sequence_Valid": true,
-    "Valid_Monetary_Values": true
-  }
+ "filename": "sample.pdf",
+ "entities": {
+   "DATE": [
+      "2025-01-15",
+      "2027-01-14"
+   ],
+   "PARTY": [
+      "GlobalTech Innovations Pvt Ltd",
+      "Apex Financial Holdings Inc"
+   ],
+   "JURISDICTION": [
+      "State of California, USA",
+      "San Francisco, California"
+   ],
+   "MONEY": [
+      "$2,500,000",
+      "$500,000"
+   ],
+   "PERSON": [
+      "Arjun Mehta",
+      "Laura Thompson"
+   ]
+ }
 }
+```
 
 ---
 
-##  Model Evaluation
+## Running Tests
 
-python src/evaluate.py  
+```
+pytest
+```
 
-Evaluation includes:
-- Precision  
-- Recall  
-- F1 Score  
-- Testing on held-out legal-style contract text  
+Expected output:
 
----
-
-##  Key Features
-
-✔ End-to-end OCR + NLP pipeline  
-✔ Custom domain-specific NER model  
-✔ Structured JSON output  
-✔ Validation and heuristic logic  
-✔ Production-oriented project structure  
+```
+2 passed
+```
 
 ---
 
-##  Future Enhancements
+## Technologies Used
 
-- Fine-tune BERT-based legal transformer model  
-- Deploy using FastAPI REST API  
-- Docker containerization  
-- CI/CD integration  
-- Cloud deployment (AWS / Azure)  
+* Python
+* spaCy
+* FastAPI
+* pdf2image
+* Tesseract OCR
+* pytest
 
 ---
 
-##  License
+## Applications
 
-This project is developed for educational and research purposes.
+* Legal contract analysis
+* Compliance automation
+* Document intelligence systems
+* Enterprise document processing
+
+---
+
+## Future Improvements
+
+* Support multiple document formats
+* Improve NER model accuracy with larger datasets
+* Deploy using Docker
+* Integrate with cloud storage APIs
+
+---
+
+## Author
+
+**Sai Tharun Reddy Bommineni**
+
+B.Tech Computer Science
+Machine Learning & Data Engineering Enthusiast
+
+---

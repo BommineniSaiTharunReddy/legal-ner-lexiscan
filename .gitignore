@@ -1,6 +1,8 @@
 venv/
+.env
+
 __pycache__/
 *.pyc
-models/
-*.pdf
-.env
+.pytest_cache/
+
+.DS_Store
